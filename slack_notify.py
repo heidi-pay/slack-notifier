@@ -24,6 +24,9 @@ with open(template) as f:
 
 data = json.dumps(data)
 
+if body == "":
+        body = "No release notes"
+
 data = data.replace("REPOSITORY_NAME", repo_name) \
         .replace("BUILD_NUMBER", build_number) \
         .replace("BODY", body) \
