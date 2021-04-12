@@ -11,7 +11,7 @@ inputs:
   github-ref:
     description: 'The release version in the form refs/tags/v4'
     required: true
-  github-ref:
+  slack-hook:
     description: 'The slack webhook url'
     required: true
 runs:
