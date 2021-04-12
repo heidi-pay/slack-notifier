@@ -1,0 +1,36 @@
+{
+  "text": "REPOSITORY_NAME BUILD_NUMBER released!",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Successful release of *REPOSITORY_NAME* build #*BUILD_NUMBER*."
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "BODY"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View on GitHub",
+            "emoji": true
+          },
+          "url": "REPO_URL"
+        }
+      ]
+    }
+  ]
+}
