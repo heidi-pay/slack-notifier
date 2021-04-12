@@ -7,4 +7,4 @@ COPY . /code/
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "./slack_notify.py"]
+ENTRYPOINT ["python", "slack_notify.py"]
