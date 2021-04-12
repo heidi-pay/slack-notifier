@@ -8,4 +8,4 @@ COPY slack_release_template.json /code/
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "slack_notify.py"]
+ENTRYPOINT ["python", "/code/slack_notify.py"]
