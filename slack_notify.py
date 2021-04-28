@@ -17,7 +17,7 @@ r = requests.get("https://api.github.com/repos/heidi-pay/{}/releases/latest".for
 
 json_response = json.loads(r.text, strict=False)
 body = json_response['body']
-body = body.replace('\n', '\\n').replace('\r', '\\r')
+body = body.replace('\n', '\\n').replace('\r', '\\r').replace("\"", "\\\"")
 
 with open(template) as f:
         data = json.load(f)
