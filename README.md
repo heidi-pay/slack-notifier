@@ -22,3 +22,13 @@ with:
   github-ref: 'refs/tags/v4'
   slack-hook: 'https://hooks.slack.com/services/XXXXX/XXXXX/XXXX'
 ```
+
+## Local testing
+
+1. Create a test slack webhook
+2. Generate a GitHub Personal Access Token
+3. Run the python script in the form:
+
+```bash
+python slack_notify.py <repository-name> <github_token> <github-ref> <slack-hook> <repository-owner>
+```

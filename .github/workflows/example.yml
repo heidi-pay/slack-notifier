@@ -1,0 +1,22 @@
+name: Example
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+env:
+  CI: true
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: HeidiPay Slack release notification
+        if: success()
+        uses: heidi-pay/slack-notifier@v1
+        with:
+          repository-name: ${{ github.event.repository.name }}
+          github-token: ${{ secrets.DEPLOYER_GITHUB_TOKEN }}
+          github-ref: ${{ github.ref }}
+          slack-hook: ${{ secrets.ORG_SLACK_RELEASES_WEBHOOK }}
