@@ -17,6 +17,7 @@ r = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(rep
                  headers={"Authorization": "token {}".format(auth_header)})
 
 json_response = json.loads(r.text, strict=False)
+print(r.text)
 body = json_response['body']
 body = body.replace('\n', '\\n').replace('\r', '\\r').replace("\"", "\\\"")
 
