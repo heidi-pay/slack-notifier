@@ -22,3 +22,4 @@ runs:
   - ${{ inputs.github-token }}
   - ${{ inputs.github-ref }}
   - ${{ inputs.slack-hook }}
+  - ${{ github.repository_owner }}
