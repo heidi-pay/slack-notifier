@@ -6,7 +6,7 @@ import requests
 repo_name = sys.argv[1]
 auth_header = sys.argv[2]
 build_number = sys.argv[3].split('/')[2]  # Assumed to be of the form "refs/tags/vX"
-template = "slack_release_template.json"
+template = "/code/slack_release_template.json"
 webhook = sys.argv[4]
 repo_owner = "heidi-pay"
 
