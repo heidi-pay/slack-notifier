@@ -8,7 +8,7 @@ auth_header = sys.argv[2]
 build_number = sys.argv[3].split('/')[2]  # Assumed to be of the form "refs/tags/vX"
 template = "slack_release_template.json"
 webhook = sys.argv[4]
-repo_owner = sys.argv[5]
+repo_owner = "heidi-pay"
 
 repo_url = "https://github.com/{}/{}/releases/tag/{}".format(repo_owner, repo_name, build_number)
 
@@ -16,8 +16,15 @@ r = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(rep
                  data={},
                  headers={"Authorization": "token {}".format(auth_header)})
 
+if r.status_code != 200:
+    raise RuntimeError("Did not receive 200 back from github API")
+
+if not r or not r.text:
+    raise RuntimeError("Did not find any text in github API response")
+
+
 json_response = json.loads(r.text, strict=False)
-print(r.text)
+
 body = json_response['body']
 body = body \
     .replace('\a', '\\a') \
