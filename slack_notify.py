@@ -17,7 +17,7 @@ r = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(rep
                  headers={"Authorization": "token {}".format(auth_header)})
 
 if r.status_code != 200:
-    raise RuntimeError("Did not receive 200 back from github API")
+    raise RuntimeError("Did not receive 200 back from github API ({} instead)".format(r.status_code))
 
 if not r or not r.text:
     raise RuntimeError("Did not find any text in github API response")
