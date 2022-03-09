@@ -19,7 +19,15 @@ r = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(rep
 json_response = json.loads(r.text, strict=False)
 print(r.text)
 body = json_response['body']
-body = body.replace('\n', '\\n').replace('\r', '\\r').replace("\"", "\\\"")
+body = body \
+    .replace('\a', '\\a') \
+    .replace('\b', '\\b') \
+    .replace('\t', '\\t') \
+    .replace('\n', '\\n') \
+    .replace('\v', '\\v') \
+    .replace('\f', '\\f') \
+    .replace('\r', '\\r') \
+    .replace("\"", "\\\"")
 
 with open(template) as f:
     data = json.load(f)
