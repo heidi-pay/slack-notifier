@@ -6,7 +6,7 @@ import requests
 repo_name = sys.argv[1]
 auth_header = sys.argv[2]
 build_number = sys.argv[3].split('/')[2]  # Assumed to be of the form "refs/tags/vX"
-template = "/code/slack_release_template.json"
+template = "./slack_release_template.json"
 webhook = sys.argv[4]
 repo_owner = "heidi-pay"
 
@@ -21,7 +21,6 @@ if r.status_code != 200:
 
 if not r or not r.text:
     raise RuntimeError("Did not find any text in github API response")
-
 
 json_response = json.loads(r.text, strict=False)
 
