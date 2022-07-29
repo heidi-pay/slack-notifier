@@ -9,7 +9,7 @@ REPO_OWNER = "heidi-pay"
 
 
 def release_success(repo_name: AnyStr, auth_header: AnyStr, build_number: AnyStr, webhook: AnyStr):
-    template = "/code/templates/release_success.json"
+    template = "/code/release_success.json"
     repo_url = "https://github.com/{}/{}/releases/tag/{}".format(REPO_OWNER, repo_name, build_number)
 
     r = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(REPO_OWNER, repo_name),
@@ -57,7 +57,7 @@ def release_success(repo_name: AnyStr, auth_header: AnyStr, build_number: AnyStr
 
 
 def release_failure(repo_name: AnyStr, build_number: AnyStr, webhook: AnyStr):
-    template = "/code/templates/release_failure.json"
+    template = "/code/release_failure.json"
     repo_url = "https://github.com/{}/{}/releases/tag/{}".format(REPO_OWNER, repo_name, build_number)
 
     with open(template) as f:

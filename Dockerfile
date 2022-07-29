@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /code
 COPY requirements.txt /code/
 COPY slack_notify.py /code/
-COPY templates /code/
+COPY templates/* /code/
 
 RUN pip install -r requirements.txt
 
