@@ -14,6 +14,9 @@ inputs:
   slack-hook:
     description: 'The slack webhook url'
     required: true
+  outcome:
+    description: 'The outcome of the job to be release to notify about'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -22,3 +25,4 @@ runs:
   - ${{ inputs.github-token }}
   - ${{ inputs.github-ref }}
   - ${{ inputs.slack-hook }}
+  - ${{ inputs.outcome }}
