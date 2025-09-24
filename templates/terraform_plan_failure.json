@@ -1,0 +1,45 @@
+{
+  "text": "Terraform Plan Failed - PR #PR_NUMBER",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":x: *Terraform Plan Failed* for *REPOSITORY_NAME* PR #*PR_NUMBER*"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Error Details:*\n```PLAN_ERROR```"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View PR on GitHub",
+            "emoji": true
+          },
+          "url": "PR_URL"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View Commit",
+            "emoji": true
+          },
+          "url": "COMMIT_URL"
+        }
+      ]
+    }
+  ]
+}

@@ -17,6 +17,15 @@ inputs:
   outcome:
     description: 'The outcome of the job to be release to notify about'
     required: false
+  plan-type:
+    description: 'The type of notification (release, terraform-plan)'
+    required: false
+  pr-number:
+    description: 'The PR number for terraform plan notifications'
+    required: false
+  plan-output:
+    description: 'The terraform plan output content'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -26,3 +35,6 @@ runs:
   - ${{ inputs.github-ref }}
   - ${{ inputs.slack-hook }}
   - ${{ inputs.outcome }}
+  - ${{ inputs.plan-type }}
+  - ${{ inputs.pr-number }}
+  - ${{ inputs.plan-output }}

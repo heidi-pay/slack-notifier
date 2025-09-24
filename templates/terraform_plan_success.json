@@ -1,0 +1,52 @@
+{
+  "text": "Terraform Plan Success - PR #PR_NUMBER",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":white_check_mark: *Terraform Plan Successful* for *REPOSITORY_NAME* PR #*PR_NUMBER*"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Plan Summary:*\n```PLAN_SUMMARY```"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Changes Detected:*\n```PLAN_OUTPUT```"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View PR on GitHub",
+            "emoji": true
+          },
+          "url": "PR_URL"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View Commit",
+            "emoji": true
+          },
+          "url": "COMMIT_URL"
+        }
+      ]
+    }
+  ]
+}

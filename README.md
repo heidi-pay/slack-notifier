@@ -1,19 +1,25 @@
 > # Slack Notifier GitHub Action
 
-This action notifies slack of a HeidiPay release. 
+This action notifies slack of HeidiPay releases and Terraform plan results. 
 
 ## Inputs
 
 - `repository-name` - The name of the GitHub repository 
 - `github-token` - The GitHub token to access private repositories
-- `github-ref` - The release version in the form refs/tags/v4
-- `slack-hook` - The URL for the slack hook to request. 
+- `github-ref` - The release version in the form refs/tags/v4 or commit ref
+- `slack-hook` - The URL for the slack hook to request
+- `outcome` - The outcome of the job (true/false) - optional
+- `plan-type` - The type of notification (release, terraform-plan) - optional
+- `pr-number` - The PR number for terraform plan notifications - optional
+- `plan-output` - The terraform plan output content - optional
 
 ## Outputs
 
 None
 
 ## Example usage
+
+### Release notifications
 ```
 uses: actions/slack-notifier@v1
 with:
@@ -21,6 +27,21 @@ with:
   github-token: 'XXXXXXXXXX'
   github-ref: 'refs/tags/v4'
   slack-hook: 'https://hooks.slack.com/services/XXXXX/XXXXX/XXXX'
+  outcome: 'true'
+```
+
+### Terraform plan notifications
+```
+uses: actions/slack-notifier@v1
+with:
+  repository-name: 'my-repo'
+  github-token: 'XXXXXXXXXX'
+  github-ref: 'refs/pull/123/merge'
+  slack-hook: 'https://hooks.slack.com/services/XXXXX/XXXXX/XXXX'
+  outcome: 'true'
+  plan-type: 'terraform-plan'
+  pr-number: '123'
+  plan-output: 'Plan: 2 to add, 1 to change, 0 to destroy...'
 ```
 
 ## Local testing
