@@ -1,3 +1,4 @@
+import base64
 import json
 import sys
 from typing import AnyStr
@@ -6,6 +7,22 @@ import requests
 
 
 REPO_OWNER = "heidi-pay"
+
+
+def decode_base64_if_needed(text: AnyStr) -> str:
+    """
+    Decode base64 text if it appears to be base64 encoded, otherwise return as-is.
+    """
+    if not text:
+        return ""
+    
+    try:
+        # Try to decode as base64
+        decoded = base64.b64decode(text).decode('utf-8')
+        return decoded
+    except Exception:
+        # If decoding fails, assume it's plain text
+        return text
 
 
 def release_success(repo_name: AnyStr, auth_header: AnyStr, build_number: AnyStr, webhook: AnyStr):
@@ -85,26 +102,38 @@ def terraform_plan_success(repo_name: AnyStr, pr_number: AnyStr, plan_output: An
     with open(template) as f:
         data = json.load(f)
 
+    # Decode base64 if needed
+    decoded_plan_output = decode_base64_if_needed(plan_output)
+
     # Truncate plan output if too long (Slack has limits)
-    truncated_output = plan_output
-    if len(plan_output) > 2000:
-        truncated_output = plan_output[:1900] + "\n... (truncated, see full output in artifacts)"
+    truncated_output = decoded_plan_output
+    if len(decoded_plan_output) > 2000:
+        truncated_output = decoded_plan_output[:1900] + "\n... (truncated, see full output in artifacts)"
 
     # Extract summary from plan output (look for common terraform plan patterns)
     plan_summary = "Plan completed successfully"
-    if "Plan:" in plan_output:
-        lines = plan_output.split('\n')
+    if "Plan:" in decoded_plan_output:
+        lines = decoded_plan_output.split('\n')
         for line in lines:
             if "Plan:" in line and ("to add" in line or "to change" in line or "to destroy" in line):
                 plan_summary = line.strip()
                 break
 
+    # Properly escape the plan output and summary for JSON
+    def escape_for_json(text):
+        if not text:
+            return ""
+        return text.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+
+    escaped_plan_summary = escape_for_json(plan_summary)
+    escaped_plan_output = escape_for_json(truncated_output)
+
     data = json.dumps(data)
 
     data = data.replace("REPOSITORY_NAME", repo_name) \
         .replace("PR_NUMBER", pr_number) \
-        .replace("PLAN_SUMMARY", plan_summary) \
-        .replace("PLAN_OUTPUT", truncated_output) \
+        .replace("PLAN_SUMMARY", escaped_plan_summary) \
+        .replace("PLAN_OUTPUT", escaped_plan_output) \
         .replace("PR_URL", pr_url) \
         .replace("COMMIT_URL", commit_url)
 
@@ -124,16 +153,27 @@ def terraform_plan_failure(repo_name: AnyStr, pr_number: AnyStr, plan_output: An
     with open(template) as f:
         data = json.load(f)
 
+    # Decode base64 if needed
+    decoded_plan_output = decode_base64_if_needed(plan_output)
+
     # Truncate error output if too long
-    truncated_error = plan_output
-    if len(plan_output) > 2000:
-        truncated_error = plan_output[:1900] + "\n... (truncated, see full output in artifacts)"
+    truncated_error = decoded_plan_output
+    if len(decoded_plan_output) > 2000:
+        truncated_error = decoded_plan_output[:1900] + "\n... (truncated, see full output in artifacts)"
+
+    # Properly escape the error output for JSON
+    def escape_for_json(text):
+        if not text:
+            return ""
+        return text.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+
+    escaped_error = escape_for_json(truncated_error)
 
     data = json.dumps(data)
 
     data = data.replace("REPOSITORY_NAME", repo_name) \
         .replace("PR_NUMBER", pr_number) \
-        .replace("PLAN_ERROR", truncated_error) \
+        .replace("PLAN_ERROR", escaped_error) \
         .replace("PR_URL", pr_url) \
         .replace("COMMIT_URL", commit_url)
 
