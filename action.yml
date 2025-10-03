@@ -17,24 +17,32 @@ inputs:
   outcome:
     description: 'The outcome of the job to be release to notify about'
     required: false
-  plan-type:
-    description: 'The type of notification (release, terraform-plan)'
+  notification-type:
+    description: 'The type of notification (release, terraform)'
     required: false
   pr-number:
-    description: 'The PR number for terraform plan notifications'
+    description: 'The PR number for terraform notifications'
     required: false
-  plan-output:
-    description: 'The terraform plan output content'
+  output:
+    description: 'The terraform output content (supports base64 encoding)'
+    required: false
+  action-type:
+    description: 'The terraform action type (PLAN, APPLY, etc.)'
+    required: false
+  gcp-environment:
+    description: 'The GCP environment name (e.g., dev, staging, prod)'
     required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-  - ${{ inputs.repository-name }}
-  - ${{ inputs.github-token }}
-  - ${{ inputs.github-ref }}
-  - ${{ inputs.slack-hook }}
-  - ${{ inputs.outcome }}
-  - ${{ inputs.plan-type }}
-  - ${{ inputs.pr-number }}
-  - ${{ inputs.plan-output }}
+  env:
+    INPUT_REPOSITORY_NAME: ${{ inputs.repository-name }}
+    INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
+    INPUT_GITHUB_REF: ${{ inputs.github-ref }}
+    INPUT_SLACK_HOOK: ${{ inputs.slack-hook }}
+    INPUT_OUTCOME: ${{ inputs.outcome }}
+    INPUT_NOTIFICATION_TYPE: ${{ inputs.notification-type }}
+    INPUT_PR_NUMBER: ${{ inputs.pr-number }}
+    INPUT_OUTPUT: ${{ inputs.output }}
+    INPUT_ACTION_TYPE: ${{ inputs.action-type }}
+    INPUT_GCP_ENVIRONMENT: ${{ inputs.gcp-environment }}

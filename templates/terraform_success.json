@@ -1,25 +1,25 @@
 {
-  "text": "Terraform Plan Success - PR #PR_NUMBER",
+  "text": "Terraform ACTION_TYPE Success - PR #PR_NUMBER",
   "blocks": [
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": ":white_check_mark: *Terraform Plan Successful* for *REPOSITORY_NAME* PR #*PR_NUMBER*"
+        "text": ":white_check_mark: *Terraform ACTION_TYPE Successful* for *REPOSITORY_NAME* PR #*PR_NUMBER*"
       }
+    },
+    {
+      "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*ACTION_TYPE Summary:*\n```TF_SUMMARY```"
+        }
     },
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "*Plan Summary:*\n```PLAN_SUMMARY```"
-      }
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "*Changes Detected:*\n```PLAN_OUTPUT```"
+        "text": "*Changes Detected:*\n```TF_OUTPUT```"
       }
     },
     {
@@ -36,15 +36,6 @@
             "emoji": true
           },
           "url": "PR_URL"
-        },
-        {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "View Commit",
-            "emoji": true
-          },
-          "url": "COMMIT_URL"
         }
       ]
     }

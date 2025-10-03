@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 import sys
 from typing import AnyStr
 
@@ -15,7 +16,7 @@ def decode_base64_if_needed(text: AnyStr) -> str:
     """
     if not text:
         return ""
-    
+
     try:
         # Try to decode as base64
         decoded = base64.b64decode(text).decode('utf-8')
@@ -94,48 +95,56 @@ def release_failure(repo_name: AnyStr, build_number: AnyStr, webhook: AnyStr):
     print(r.text)
 
 
-def terraform_plan_success(repo_name: AnyStr, pr_number: AnyStr, plan_output: AnyStr, webhook: AnyStr, github_ref: AnyStr):
-    template = "/code/terraform_plan_success.json"
+def terraform_success(repo_name: AnyStr, pr_number: AnyStr, output: AnyStr, webhook: AnyStr, github_ref: AnyStr, action_type: str = "PLAN", gcp_environment: str = ""):
+    template = "/code/terraform_success.json"
     pr_url = "https://github.com/{}/{}/pull/{}".format(REPO_OWNER, repo_name, pr_number)
-    commit_url = "https://github.com/{}/{}/commit/{}".format(REPO_OWNER, repo_name, github_ref.split('/')[-1])
 
     with open(template) as f:
         data = json.load(f)
 
     # Decode base64 if needed
-    decoded_plan_output = decode_base64_if_needed(plan_output)
+    decoded_output = decode_base64_if_needed(output)
 
-    # Truncate plan output if too long (Slack has limits)
-    truncated_output = decoded_plan_output
-    if len(decoded_plan_output) > 2000:
-        truncated_output = decoded_plan_output[:1900] + "\n... (truncated, see full output in artifacts)"
+    # Truncate output if too long (Slack has limits)
+    truncated_output = decoded_output
+    if len(decoded_output) > 2000:
+        truncated_output = decoded_output[:1900] + "\n... (truncated, see full output in artifacts)"
 
-    # Extract summary from plan output (look for common terraform plan patterns)
-    plan_summary = "Plan completed successfully"
-    if "Plan:" in decoded_plan_output:
-        lines = decoded_plan_output.split('\n')
+    # Extract summary from output (look for common terraform patterns)
+    summary = f"{action_type} completed successfully"
+    if "Plan:" in decoded_output:
+        lines = decoded_output.split('\n')
         for line in lines:
             if "Plan:" in line and ("to add" in line or "to change" in line or "to destroy" in line):
-                plan_summary = line.strip()
+                summary = line.strip()
+                break
+    elif "Apply complete!" in decoded_output:
+        summary = "Apply completed successfully"
+    elif "Apply:" in decoded_output:
+        lines = decoded_output.split('\n')
+        for line in lines:
+            if "Apply:" in line and ("added" in line or "changed" in line or "destroyed" in line):
+                summary = line.strip()
                 break
 
-    # Properly escape the plan output and summary for JSON
+    # Properly escape the output and summary for JSON
     def escape_for_json(text):
         if not text:
             return ""
         return text.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
 
-    escaped_plan_summary = escape_for_json(plan_summary)
-    escaped_plan_output = escape_for_json(truncated_output)
+    escaped_tf_action_summary = escape_for_json(summary)
+    escaped_tf_action_output = escape_for_json(truncated_output)
 
     data = json.dumps(data)
 
     data = data.replace("REPOSITORY_NAME", repo_name) \
         .replace("PR_NUMBER", pr_number) \
-        .replace("PLAN_SUMMARY", escaped_plan_summary) \
-        .replace("PLAN_OUTPUT", escaped_plan_output) \
+        .replace("TF_SUMMARY", escaped_tf_action_summary) \
+        .replace("TF_OUTPUT", escaped_tf_action_output) \
         .replace("PR_URL", pr_url) \
-        .replace("COMMIT_URL", commit_url)
+        .replace("ACTION_TYPE", action_type) \
+        .replace("GCP_ENVIRONMENT_NAME", gcp_environment)
 
     print(data)
 
@@ -145,21 +154,20 @@ def terraform_plan_success(repo_name: AnyStr, pr_number: AnyStr, plan_output: An
     print(r.text)
 
 
-def terraform_plan_failure(repo_name: AnyStr, pr_number: AnyStr, plan_output: AnyStr, webhook: AnyStr, github_ref: AnyStr):
-    template = "/code/terraform_plan_failure.json"
+def terraform_failure(repo_name: AnyStr, pr_number: AnyStr, output: AnyStr, webhook: AnyStr, github_ref: AnyStr, action_type: str = "PLAN", gcp_environment: str = ""):
+    template = "/code/terraform_failure.json"
     pr_url = "https://github.com/{}/{}/pull/{}".format(REPO_OWNER, repo_name, pr_number)
-    commit_url = "https://github.com/{}/{}/commit/{}".format(REPO_OWNER, repo_name, github_ref.split('/')[-1])
 
     with open(template) as f:
         data = json.load(f)
 
     # Decode base64 if needed
-    decoded_plan_output = decode_base64_if_needed(plan_output)
+    decoded_output = decode_base64_if_needed(output)
 
     # Truncate error output if too long
-    truncated_error = decoded_plan_output
-    if len(decoded_plan_output) > 2000:
-        truncated_error = decoded_plan_output[:1900] + "\n... (truncated, see full output in artifacts)"
+    truncated_error = decoded_output
+    if len(decoded_output) > 2000:
+        truncated_error = decoded_output[:1900] + "\n... (truncated, see full output in artifacts)"
 
     # Properly escape the error output for JSON
     def escape_for_json(text):
@@ -173,9 +181,10 @@ def terraform_plan_failure(repo_name: AnyStr, pr_number: AnyStr, plan_output: An
 
     data = data.replace("REPOSITORY_NAME", repo_name) \
         .replace("PR_NUMBER", pr_number) \
-        .replace("PLAN_ERROR", escaped_error) \
+        .replace("TF_ERROR", escaped_error) \
         .replace("PR_URL", pr_url) \
-        .replace("COMMIT_URL", commit_url)
+        .replace("ACTION_TYPE", action_type) \
+        .replace("GCP_ENVIRONMENT_NAME", gcp_environment)
 
     print(data)
 
@@ -186,24 +195,73 @@ def terraform_plan_failure(repo_name: AnyStr, pr_number: AnyStr, plan_output: An
 
 
 def main():
-    repo_name = sys.argv[1]
-    auth_header = sys.argv[2]
-    github_ref = sys.argv[3]
-    webhook = sys.argv[4]
-    outcome = sys.argv[5] if len(sys.argv) > 5 else None
-    plan_type = sys.argv[6] if len(sys.argv) > 6 else None
-    pr_number = sys.argv[7] if len(sys.argv) > 7 else None
-    plan_output = sys.argv[8] if len(sys.argv) > 8 else None
+    # Read from environment variables (more reliable than sys.argv)
+    repo_name = os.getenv('INPUT_REPOSITORY_NAME', '')
+    auth_header = os.getenv('INPUT_GITHUB_TOKEN', '')
+    github_ref = os.getenv('INPUT_GITHUB_REF', '')
+    webhook = os.getenv('INPUT_SLACK_HOOK', '')
+    outcome = os.getenv('INPUT_OUTCOME', '')
+    notification_type = os.getenv('INPUT_NOTIFICATION_TYPE', '')
+    pr_number = os.getenv('INPUT_PR_NUMBER', '')
+    output = os.getenv('INPUT_OUTPUT', '')
+    action_type = os.getenv('INPUT_ACTION_TYPE', 'PLAN')
+    gcp_environment = os.getenv('INPUT_GCP_ENVIRONMENT', '')
+    
+    # Debug: Show which parameters were read from environment variables
+    print(f"[DEBUG] Environment variables read:")
+    print(f"[DEBUG]   INPUT_REPOSITORY_NAME: {'✓' if repo_name else '✗'}")
+    print(f"[DEBUG]   INPUT_GITHUB_TOKEN: {'✓' if auth_header else '✗'}")
+    print(f"[DEBUG]   INPUT_GITHUB_REF: {'✓' if github_ref else '✗'}")
+    print(f"[DEBUG]   INPUT_SLACK_HOOK: {'✓' if webhook else '✗'}")
+    print(f"[DEBUG]   INPUT_OUTCOME: {'✓' if outcome else '✗'}")
+    print(f"[DEBUG]   INPUT_NOTIFICATION_TYPE: {'✓' if notification_type else '✗'}")
+    print(f"[DEBUG]   INPUT_PR_NUMBER: {'✓' if pr_number else '✗'}")
+    print(f"[DEBUG]   INPUT_OUTPUT: {'✓' if output else '✗'}")
+    print(f"[DEBUG]   INPUT_ACTION_TYPE: {'✓' if action_type else '✗'}")
+    print(f"[DEBUG]   INPUT_GCP_ENVIRONMENT: {'✓' if gcp_environment else '✗'}")
+    print(f"[DEBUG] sys.argv length: {len(sys.argv)}")
+    
+    # Fallback to sys.argv for backward compatibility
+    if not repo_name and len(sys.argv) > 1:
+        repo_name = sys.argv[1]
+        print(f"[DEBUG] Using sys.argv fallback for repo_name: {repo_name}")
+    if not auth_header and len(sys.argv) > 2:
+        auth_header = sys.argv[2]
+        print(f"[DEBUG] Using sys.argv fallback for auth_header")
+    if not github_ref and len(sys.argv) > 3:
+        github_ref = sys.argv[3]
+        print(f"[DEBUG] Using sys.argv fallback for github_ref: {github_ref}")
+    if not webhook and len(sys.argv) > 4:
+        webhook = sys.argv[4]
+        print(f"[DEBUG] Using sys.argv fallback for webhook")
+    if not outcome and len(sys.argv) > 5:
+        outcome = sys.argv[5]
+        print(f"[DEBUG] Using sys.argv fallback for outcome: {outcome}")
+    if not notification_type and len(sys.argv) > 6:
+        notification_type = sys.argv[6]
+        print(f"[DEBUG] Using sys.argv fallback for notification_type: {notification_type}")
+    if not pr_number and len(sys.argv) > 7:
+        pr_number = sys.argv[7]
+        print(f"[DEBUG] Using sys.argv fallback for pr_number: {pr_number}")
+    if not output and len(sys.argv) > 8:
+        output = sys.argv[8]
+        print(f"[DEBUG] Using sys.argv fallback for output")
+    if action_type == 'PLAN' and len(sys.argv) > 9:
+        action_type = sys.argv[9]
+        print(f"[DEBUG] Using sys.argv fallback for action_type: {action_type}")
+    if not gcp_environment and len(sys.argv) > 10:
+        gcp_environment = sys.argv[10]
+        print(f"[DEBUG] Using sys.argv fallback for gcp_environment: {gcp_environment}")
 
-    # Handle Terraform plan notifications
-    if plan_type == "terraform":
+    # Handle Terraform notifications
+    if notification_type == "terraform":
         if outcome == "true":
-            terraform_plan_success(repo_name, pr_number, plan_output, webhook, github_ref)
+            terraform_success(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
         elif outcome == "false":
-            terraform_plan_failure(repo_name, pr_number, plan_output, webhook, github_ref)
+            terraform_failure(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
         else:
             # Default to success if outcome not specified
-            terraform_plan_success(repo_name, pr_number, plan_output, webhook, github_ref)
+            terraform_success(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
     else:
         # Handle release notifications (existing behavior)
         build_number = github_ref.split('/')[2]  # Assumed to be of the form "refs/tags/vX"
