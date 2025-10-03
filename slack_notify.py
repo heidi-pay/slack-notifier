@@ -209,17 +209,19 @@ def main():
     
     # Debug: Show which parameters were read from environment variables
     print(f"[DEBUG] Environment variables read:")
-    print(f"[DEBUG]   INPUT_REPOSITORY_NAME: {'✓' if repo_name else '✗'}")
-    print(f"[DEBUG]   INPUT_GITHUB_TOKEN: {'✓' if auth_header else '✗'}")
-    print(f"[DEBUG]   INPUT_GITHUB_REF: {'✓' if github_ref else '✗'}")
-    print(f"[DEBUG]   INPUT_SLACK_HOOK: {'✓' if webhook else '✗'}")
-    print(f"[DEBUG]   INPUT_OUTCOME: {'✓' if outcome else '✗'}")
-    print(f"[DEBUG]   INPUT_NOTIFICATION_TYPE: {'✓' if notification_type else '✗'}")
-    print(f"[DEBUG]   INPUT_PR_NUMBER: {'✓' if pr_number else '✗'}")
-    print(f"[DEBUG]   INPUT_OUTPUT: {'✓' if output else '✗'}")
-    print(f"[DEBUG]   INPUT_ACTION_TYPE: {'✓' if action_type else '✗'}")
-    print(f"[DEBUG]   INPUT_GCP_ENVIRONMENT: {'✓' if gcp_environment else '✗'}")
+    print(f"[DEBUG]   INPUT_REPOSITORY_NAME: '{repo_name}'")
+    print(f"[DEBUG]   INPUT_GITHUB_TOKEN: {'[SET]' if auth_header else '[NOT SET]'}")
+    print(f"[DEBUG]   INPUT_GITHUB_REF: '{github_ref}'")
+    print(f"[DEBUG]   INPUT_SLACK_HOOK: {'[SET]' if webhook else '[NOT SET]'}")
+    print(f"[DEBUG]   INPUT_OUTCOME: '{outcome}'")
+    print(f"[DEBUG]   INPUT_NOTIFICATION_TYPE: '{notification_type}'")
+    print(f"[DEBUG]   INPUT_PR_NUMBER: '{pr_number}'")
+    print(f"[DEBUG]   INPUT_OUTPUT: {'[SET]' if output else '[NOT SET]'}")
+    print(f"[DEBUG]   INPUT_ACTION_TYPE: '{action_type}'")
+    print(f"[DEBUG]   INPUT_GCP_ENVIRONMENT: '{gcp_environment}'")
     print(f"[DEBUG] sys.argv length: {len(sys.argv)}")
+    if len(sys.argv) > 1:
+        print(f"[DEBUG] sys.argv values: {sys.argv[1:]}")
     
     # Fallback to sys.argv for backward compatibility
     if not repo_name and len(sys.argv) > 1:
