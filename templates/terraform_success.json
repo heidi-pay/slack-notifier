@@ -1,11 +1,11 @@
 {
-  "text": "Terraform ACTION_TYPE Success for ENV: GCP_ENVIRONMENT_NAME - PR #PR_NUMBER",
+  "text": "Terraform ACTION_TYPE Success GCP_ENVIRONMENT_NAME - PR #PR_NUMBER",
   "blocks": [
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": ":white_check_mark: *Terraform ACTION_TYPE Successful* for *REPOSITORY_NAME* PR #*PR_NUMBER*"
+        "text": ":white_check_mark: *Terraform ACTION_TYPE Successful* for *REPOSITORY_NAME* PR #*PR_NUMBER* (Environment: *GCP_ENVIRONMENT_NAME*)"
       }
     },
     {
