@@ -257,14 +257,16 @@ def main():
 
     # Handle Terraform notifications
     if notification_type == "terraform":
+        print(f"[DEBUG] → Using NEW FLOW: Terraform notifications")
         if outcome == "true":
             terraform_success(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
         elif outcome == "false":
             terraform_failure(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
         else:
             # Default to success if outcome not specified
-            terraform_success(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
+            terraform_failure(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
     else:
+        print(f"[DEBUG] → Using OLD FLOW: Release notifications")
         # Handle release notifications (existing behavior)
         build_number = github_ref.split('/')[2]  # Assumed to be of the form "refs/tags/vX"
         if outcome:
