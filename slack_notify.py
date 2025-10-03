@@ -260,10 +260,7 @@ def main():
         print(f"[DEBUG] → Using NEW FLOW: Terraform notifications")
         if outcome == "true":
             terraform_success(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
-        elif outcome == "false":
-            terraform_failure(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
         else:
-            # Default to success if outcome not specified
             terraform_failure(repo_name, pr_number, output, webhook, github_ref, action_type, gcp_environment)
     else:
         print(f"[DEBUG] → Using OLD FLOW: Release notifications")
@@ -272,11 +269,10 @@ def main():
         if outcome:
             if outcome == "true":
                 release_success(repo_name, auth_header, build_number, webhook)
-            if outcome == "false":
+            else:
                 release_failure(repo_name, build_number, webhook)
         else:
             release_success(repo_name, auth_header, build_number, webhook)
-
 
 if __name__ == "__main__":
     main()
