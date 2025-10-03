@@ -248,7 +248,7 @@ def main():
     if not output and len(sys.argv) > 8:
         output = sys.argv[8]
         print(f"[DEBUG] Using sys.argv fallback for output")
-    if action_type == 'PLAN' and len(sys.argv) > 9:
+    if not action_type and len(sys.argv) > 9:
         action_type = sys.argv[9]
         print(f"[DEBUG] Using sys.argv fallback for action_type: {action_type}")
     if not gcp_environment and len(sys.argv) > 10:
