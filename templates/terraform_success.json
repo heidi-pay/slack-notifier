@@ -1,5 +1,5 @@
 {
-  "text": "Terraform ACTION_TYPE Success - PR #PR_NUMBER",
+  "text": "Terraform ACTION_TYPE Success GCP_ENVIRONMENT_NAME - PR #PR_NUMBER",
   "blocks": [
     {
       "type": "section",
