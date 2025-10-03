@@ -11,7 +11,7 @@ This action notifies slack of HeidiPay releases and Terraform plan results.
 - `outcome` - The outcome of the job (true/false) - optional
 - `plan-type` - The type of notification (release, terraform-plan) - optional
 - `pr-number` - The PR number for terraform plan notifications - optional
-- `plan-output` - The terraform plan output content - optional
+- `plan-output` - The terraform plan output content (supports base64 encoding) - optional
 
 ## Outputs
 
@@ -21,7 +21,7 @@ None
 
 ### Release notifications
 ```
-uses: actions/slack-notifier@v1
+uses: actions/slack-notifier@v3
 with:
   repository-name: 'gh-actions'
   github-token: 'XXXXXXXXXX'
@@ -32,7 +32,7 @@ with:
 
 ### Terraform plan notifications
 ```
-uses: actions/slack-notifier@v1
+uses: actions/slack-notifier@v3
 with:
   repository-name: 'my-repo'
   github-token: 'XXXXXXXXXX'
@@ -41,8 +41,10 @@ with:
   outcome: 'true'
   plan-type: 'terraform-plan'
   pr-number: '123'
-  plan-output: 'Plan: 2 to add, 1 to change, 0 to destroy...'
+  plan-output: 'UGxhbjogMiB0byBhZGQsIDEgdG8gY2hhbmdlLCAwIHRvIGRlc3Ryb3kuLi4='  # base64 encoded
 ```
+
+**Note:** The `plan-output` parameter supports both plain text and base64-encoded content. The action will automatically detect and decode base64 content.
 
 ## Local testing
 

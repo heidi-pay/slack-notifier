@@ -196,7 +196,7 @@ def main():
     plan_output = sys.argv[8] if len(sys.argv) > 8 else None
 
     # Handle Terraform plan notifications
-    if plan_type == "terraform-plan":
+    if plan_type == "terraform":
         if outcome == "true":
             terraform_plan_success(repo_name, pr_number, plan_output, webhook, github_ref)
         elif outcome == "false":
