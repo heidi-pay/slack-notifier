@@ -33,7 +33,7 @@ inputs:
   gcp-environment:
     description: 'The GCP environment name (e.g., dev, staging, prod)'
     required: false
-  run-id:
+  github-run-id:
     description: 'The GitHub Actions run ID (e.g., ${{ github.run_id }})'
     required: false
 runs:
@@ -50,4 +50,4 @@ runs:
     INPUT_OUTPUT: ${{ inputs.output }}
     INPUT_ACTION_TYPE: ${{ inputs.action-type }}
     INPUT_GCP_ENVIRONMENT: ${{ inputs.gcp-environment }}
-    INPUT_RUN_ID: ${{ inputs.run-id }}
+    INPUT_RUN_ID: ${{ inputs.github-run-id }}
