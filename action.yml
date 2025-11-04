@@ -33,9 +33,6 @@ inputs:
   gcp-environment:
     description: 'The GCP environment name (e.g., dev, staging, prod)'
     required: false
-  run-id:
-    description: 'The GitHub Actions run ID'
-    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -44,10 +41,10 @@ runs:
     INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
     INPUT_GITHUB_REF: ${{ inputs.github-ref }}
     INPUT_SLACK_HOOK: ${{ inputs.slack-hook }}
-    INPUT_OUTCOME: ${{ inputs.outcome || 'false' }}
+    INPUT_OUTCOME: ${{ inputs.outcome }}
     INPUT_NOTIFICATION_TYPE: ${{ inputs.notification-type }}
     INPUT_PR_NUMBER: ${{ inputs.pr-number }}
     INPUT_OUTPUT: ${{ inputs.output }}
     INPUT_ACTION_TYPE: ${{ inputs.action-type }}
     INPUT_GCP_ENVIRONMENT: ${{ inputs.gcp-environment }}
-    INPUT_RUN_ID: ${{ inputs.run-id || github.run_id }}
+    INPUT_RUN_ID: ${{ github.run_id }}

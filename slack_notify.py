@@ -212,7 +212,7 @@ def main():
     auth_header = os.getenv('INPUT_GITHUB_TOKEN', '')
     github_ref = os.getenv('INPUT_GITHUB_REF', '')
     webhook = os.getenv('INPUT_SLACK_HOOK', '')
-    outcome = os.getenv('INPUT_OUTCOME', '')
+    outcome = os.getenv('INPUT_OUTCOME', 'false')
     notification_type = os.getenv('INPUT_NOTIFICATION_TYPE', '')
     pr_number = os.getenv('INPUT_PR_NUMBER', '')
     output = os.getenv('INPUT_OUTPUT', '')
