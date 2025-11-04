@@ -10,13 +10,6 @@
     },
     {
       "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "*ACTION_TYPE Summary:*\n```TF_SUMMARY```"
-        }
-    },
-    {
-      "type": "section",
       "text": {
         "type": "mrkdwn",
         "text": "*Changes Detected:*\n```TF_OUTPUT```"
