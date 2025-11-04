@@ -34,7 +34,7 @@ inputs:
     description: 'The GCP environment name (e.g., dev, staging, prod)'
     required: false
   github-run-id:
-    description: 'The GitHub Actions run ID (e.g., ${{ github.run_id }})'
+    description: 'The GitHub Actions run ID'
     required: false
 runs:
   using: 'docker'
