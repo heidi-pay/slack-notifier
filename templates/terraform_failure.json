@@ -29,6 +29,15 @@
             "emoji": true
           },
           "url": "PR_URL"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View Run on GitHub",
+            "emoji": true
+          },
+          "url": "RUN_URL"
         }
       ]
     }
