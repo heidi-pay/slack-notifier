@@ -1,0 +1,45 @@
+{
+  "text": "Terraform ACTION_TYPE Failed GCP_ENVIRONMENT_NAME - PR #PR_NUMBER",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":x: *Terraform ACTION_TYPE Failed* for *REPOSITORY_NAME* PR #*PR_NUMBER* (Environment: *GCP_ENVIRONMENT_NAME*)"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Error Details:*\n```TF_ERROR```"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View PR on GitHub",
+            "emoji": true
+          },
+          "url": "PR_URL"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View Run on GitHub",
+            "emoji": true
+          },
+          "url": "RUN_URL"
+        }
+      ]
+    }
+  ]
+}

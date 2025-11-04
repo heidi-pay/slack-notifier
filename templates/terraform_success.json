@@ -1,0 +1,45 @@
+{
+  "text": "Terraform ACTION_TYPE Success GCP_ENVIRONMENT_NAME - PR #PR_NUMBER",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":white_check_mark: *Terraform ACTION_TYPE Successful* for *REPOSITORY_NAME* PR #*PR_NUMBER* (Environment: *GCP_ENVIRONMENT_NAME*)"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Changes Detected:*\n```TF_OUTPUT```"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View PR on GitHub",
+            "emoji": true
+          },
+          "url": "PR_URL"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "View Run on GitHub",
+            "emoji": true
+          },
+          "url": "RUN_URL"
+        }
+      ]
+    }
+  ]
+}
